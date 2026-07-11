@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hunter Delaney</title>
+  <meta name="description" content="Hunter Delaney — projects in experimentation, data, and optimization.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Hunter <span class="accent">Delaney</span></h1>
+    <p class="tagline">Technology &amp; Information Management @ UC Santa Cruz</p>
+    <nav>
+      <a href="#projects">projects</a>
+      <a href="https://www.linkedin.com/in/hunter-delaney-636558337/">linkedin</a>
+      <a href="https://github.com/Cassie7511">github</a>
+      <a href="mailto:hunterdelaney7511@gmail.com">email</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="about">
+      <p>
+        I work on behavioral experiments, data pipelines, and optimization models.
+        Below are some things I've built.
+      </p>
+    </section>
+
+    <section id="projects">
+      <h2><span class="accent">#</span> projects</h2>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Donation-at-Checkout Experiments</h3>
+          <span class="tags">Qualtrics · JavaScript · Python</span>
+        </div>
+        <p>
+          Randomized A/B experiments testing donation prompt designs inside realistic
+          airline checkout flows, fielded to online participant panels. Built the
+          simulated booking UIs, analyzed the results, and co-authored a white paper.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Dimensional Data Warehouse</h3>
+          <span class="tags">dbt · Postgres · SQL</span>
+        </div>
+        <p>
+          End-to-end dimensional warehouse for a feature-flagging platform: grain
+          selection, semi-additive MRR modeling, conformed dimensions, and tested dbt
+          models feeding executive metrics.
+        </p>
+        <a class="more" href="Projects/warehouse/index.html">view files &rarr;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>AdStream — Ad Allocation Engine</h3>
+          <span class="tags">Python · OR-Tools · MILP</span>
+        </div>
+        <p>
+          Two-stage mixed-integer program + local search that allocates ad impressions
+          and sequences advertisers under capacity, topic, and spacing constraints —
+          using 100% of inventory and lifting net revenue ~14.6%.
+        </p>
+        <a class="more" href="Projects/adstream/index.html">view files &rarr;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Multi-Plant Production Optimizer</h3>
+          <span class="tags">Linear Programming · Excel · Python</span>
+        </div>
+        <p>
+          Linear programming model allocating production across three global plants
+          under capacity, material, and emergency-budget constraints while meeting
+          delivery windows at minimum cost.
+        </p>
+        <a class="more" href="Projects/orange-electronics/index.html">view files &rarr;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Client Health Analytics</h3>
+          <span class="tags">Python · Jupyter · Predictive Modeling</span>
+        </div>
+        <p>
+          Churn-risk and lifetime-value modeling for an ERP services firm: predictive
+          models, client segmentation via clustering, and an executive report with
+          retention recommendations.
+        </p>
+        <a class="more" href="Projects/client-analytics/index.html">view files &rarr;</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Hunter Delaney</p>
+  </footer>
+
+</body>
+</html>

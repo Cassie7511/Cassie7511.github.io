@@ -1,0 +1,300 @@
+import io, sys
+import pandas as pd
+import numpy as np
+from ortools.sat.python import cp_model
+
+###* Indicator Variables *###
+# Silly fake macro to make accessing conditionals easier
+# Used express shipping from a factory for a target week?
+KyS45 = 0
+CyS45 = 1
+GyS45 = 2
+KyS46 = 3
+CyS46 = 4
+GyS46 = 5
+
+# [standard, express] production days available by week for factory
+production_days = {
+    "45": {"K": [11, 26], "C": [9, 25], "G": [26, 28]},
+    "46": {"K": [18, 33], "C": [16, 32], "G": [33, 35]},
+}
+
+# Sanity limit to constrain the solution space and
+# prevent trying to produce two million laptops at a facility
+max_product = 1000000
+
+###* Parameters *###
+#       Phone, Tablet, Laptop
+kCost = [390, 585, 750]
+cCost = [427, 640, 790]
+gCost = [466, 699, 814]
+
+# Unit time cost for each product type
+#       Phone, Tablet, Laptop
+# pre-scaled by 100
+unitCost = [100, 150, 200]
+
+
+
+# Derived Units of production per day
+# Scale up by 100 later in the constraints
+daily_capacity = [7500, 11429, 5714]
+
+
+#        Display Processor Battery Memory Camera
+parts = {
+    "K": [150000, 155000, 148000, 190000, 85000],
+    "C": [340000, 350000, 385000, 410000, 300000],
+    "G": [180000, 185000, 180000, 360000, 70000],
+}
+
+shipping_costs = [
+    [15, 60],
+    [16, 65],
+    [5, 15]
+]
+
+
+#          Phones   Tablets	Laptops
+delivery_targets = {
+    "45": [70000,   25000,  48000], 
+    "46": [165000,  95000,  50000]}
+# Normal time is 100 (1 * 100)
+overtime = 50
+
+def binstr(n):
+    res = []
+    for i in range(1 << n):
+        
+        # build string from bits of i
+        s = []
+        for j in iter(range(n)):
+            if (i >> j) & 1:
+                s.append(1)
+            else:
+                s.append(0)
+        res.append(s)
+        
+    return res
+
+def intify(i):
+    return int(i)
+
+def restart_line():
+    sys.stdout.write('\r')
+    sys.stdout.flush()
+
+def bruteForce(conditionals):
+
+    
+
+    model = cp_model.CpModel()
+
+    ###* Decision Variables *###
+    k45 = ["kPhones45", "kTablets45", "kLaptops45"]
+    c45 = ["cPhones45", "cTablets45", "cLaptops45"]
+    g45 = ["gPhones45", "gTablets45", "gLaptops45"]
+    k46 = ["kPhones46", "kTablets46", "kLaptops46"]
+    c46 = ["cPhones46", "cTablets46", "cLaptops46"]
+    g46 = ["gPhones46", "gTablets46", "gLaptops46"]
+
+    xK45 = []
+    for e in k45:
+        xK45.append(model.new_int_var(0, max_product, e))
+
+    xC45 = []
+    for e in c45:
+        xC45.append(model.new_int_var(0, max_product, e))
+
+    xG45 = []
+    for e in g45:
+        xG45.append(model.new_int_var(0, max_product, e))
+
+    xK46 = []
+    for e in k46:
+        xK46.append(model.new_int_var(0, max_product, e))
+
+    xC46 = []
+    for e in c46:
+        xC46.append(model.new_int_var(0, max_product, e))
+
+    xG46 = []
+    for e in g46:
+        xG46.append(model.new_int_var(0, max_product, e))
+
+    
+    ##* Constraints *##
+
+    # Display constraints
+    model.add(np.sum(xK45) + np.sum(xK46) <= parts["K"][0])
+    model.add(np.sum(xC45) + np.sum(xC46) <= parts["C"][0])
+    model.add(np.sum(xG45) + np.sum(xG46) <= parts["G"][0])
+
+    # Processor constraints
+    model.add(np.sum(xK45) + np.sum(xK46) <= parts["K"][1])
+    model.add(np.sum(xC45) + np.sum(xC46) <= parts["C"][1])
+    model.add(np.sum(xG45) + np.sum(xG46) <= parts["G"][1])
+
+    # Battery constraints
+    model.add(np.sum(xK45) + np.sum(xK46) <= parts["K"][2])
+    model.add(np.sum(xC45) + np.sum(xC46) <= parts["C"][2])
+    model.add(np.sum(xG45) + np.sum(xG46) <= parts["G"][2])
+
+    # Memory constraints
+    # Laptops have double the memory cost so we double their count
+    model.add(np.dot(xK45, [1, 1, 2]) + np.dot(xK46, [1, 1, 2]) <= parts["K"][3])
+    model.add(np.dot(xC45, [1, 1, 2]) + np.dot(xC46, [1, 1, 2]) <= parts["C"][3])
+    model.add(np.dot(xG45, [1, 1, 2]) + np.dot(xG46, [1, 1, 2]) <= parts["G"][3])
+
+    # Camera constraints
+    model.add(np.sum(xK45) + np.sum(xK46) <= parts["K"][4])
+    model.add(np.sum(xC45) + np.sum(xC46) <= parts["C"][4])
+    model.add(np.sum(xG45) + np.sum(xG46) <= parts["G"][4])
+
+    # W45 Phone Target
+    model.add(np.sum(np.transpose([xK45, xC45, xG45])[0]) >= delivery_targets['45'][0])
+    # W45 Tablet Target
+    model.add(np.sum(np.transpose([xK45, xC45, xG45])[1]) >= delivery_targets['45'][1])
+    # W45 Laptop Target
+    model.add(np.sum(np.transpose([xK45, xC45, xG45])[2]) >= delivery_targets['45'][2])
+
+    # W46 Phone Target
+    model.add(np.sum(np.transpose([xK46, xC46, xG46])[0]) >= delivery_targets['46'][0])
+    # W46 Tablet Target
+    model.add(np.sum(np.transpose([xK46, xC46, xG46])[1]) >= delivery_targets['46'][1])
+    # W46 Laptop Target
+    model.add(np.sum(np.transpose([xK46, xC46, xG46])[2]) >= delivery_targets['46'][2])
+
+
+   
+    # Guarantee that we don't use more time or production than we actually have available to us in w45
+    # And that we dont ship late
+    model.add(np.dot(xK45, unitCost) <= production_days["45"]["K"][conditionals[KyS45]] * daily_capacity[0] * (100))
+    model.add(np.dot(xC45, unitCost) <= production_days["45"]["C"][conditionals[CyS45]] * daily_capacity[1] * (100))
+    model.add(np.dot(xG45, unitCost) <= production_days["45"]["G"][conditionals[GyS45]] * daily_capacity[2] * (100))
+
+
+
+    # Guarantee that we don't use more production time than is available to us in week 46
+    # This takes into account unused production time during the week 45 target, so that time can be
+    # allocated forwards into delivering for week 46
+    # (Total gross w46 production time) - (consumed w45 production time)
+    model.add(np.dot(xK46, unitCost) <= (production_days["46"]["K"][conditionals[KyS46]]) * daily_capacity[0] * (100) - np.dot(xK45, unitCost))
+    model.add(np.dot(xC46, unitCost) <= (production_days["46"]["C"][conditionals[CyS46]]) * daily_capacity[1] * (100) - np.dot(xC45, unitCost))
+    model.add(np.dot(xG46, unitCost) <= (production_days["46"]["G"][conditionals[GyS46]]) * daily_capacity[2] * (100) - np.dot(xG45, unitCost))
+ 
+
+
+
+    model.minimize(
+            np.dot(xK45, kCost)  + np.dot( xK45, [ (shipping_costs[0][conditionals[KyS45]] ), (shipping_costs[0][conditionals[KyS45]]) * 1.5, (shipping_costs[0][conditionals[KyS45]] * 2)])
+        +   np.dot(xK46, kCost)  + np.dot( xK46, [ (shipping_costs[0][conditionals[KyS46]] ), (shipping_costs[0][conditionals[KyS46]]) * 1.5, (shipping_costs[0][conditionals[KyS46]] * 2)])
+        +   np.dot(xC45, cCost)  + np.dot( xC45, [ (shipping_costs[1][conditionals[CyS45]] ), (shipping_costs[1][conditionals[CyS45]]) * 1.5, (shipping_costs[1][conditionals[CyS45]] * 2)])
+        +   np.dot(xC46, cCost)  + np.dot( xC46, [ (shipping_costs[1][conditionals[CyS46]] ), (shipping_costs[1][conditionals[CyS46]]) * 1.5, (shipping_costs[1][conditionals[CyS46]] * 2)])
+        +   np.dot(xG45, gCost)  + np.dot( xG45, [ (shipping_costs[2][conditionals[GyS45]] ), (shipping_costs[2][conditionals[GyS45]]) * 1.5, (shipping_costs[2][conditionals[GyS45]] * 2)])
+        +   np.dot(xG46, gCost)  + np.dot( xG46, [ (shipping_costs[2][conditionals[GyS46]] ), (shipping_costs[2][conditionals[GyS46]]) * 1.5, (shipping_costs[2][conditionals[GyS46]] * 2)])
+    )
+
+    solver = cp_model.CpSolver()
+    status = solver.solve(model)
+
+    # Build our debug dataframe
+    df = pd.DataFrame(columns=["Phones", "Tablets", "Laptops", "Displays", "Processors", "Batteries", "Memory","Cameras"])
+    df.loc["xK45"] = [solver.value(xK45[0]),solver.value(xK45[1]),solver.value(xK45[2]), 
+    np.sum([solver.value(xK45[0]),solver.value(xK45[1]),solver.value(xK45[2])])    + np.sum([solver.value(xK46[0]),solver.value(xK46[1]),solver.value(xK46[2])])   ,
+    np.sum([solver.value(xK45[0]),solver.value(xK45[1]),solver.value(xK45[2])])    + np.sum([solver.value(xK46[0]),solver.value(xK46[1]),solver.value(xK46[2])])   , 
+    np.sum([solver.value(xK45[0]),solver.value(xK45[1]),solver.value(xK45[2])])    + np.sum([solver.value(xK46[0]),solver.value(xK46[1]),solver.value(xK46[2])])   , 
+    np.sum([solver.value(xK45[0]),solver.value(xK45[1]),solver.value(xK45[2])* 2]) + np.sum([solver.value(xK46[0]),solver.value(xK46[1]),solver.value(xK46[2])* 2]), 
+    np.sum([solver.value(xK45[0]),solver.value(xK45[1]),solver.value(xK45[2])])    + np.sum([solver.value(xK46[0]),solver.value(xK46[1]),solver.value(xK46[2])])
+    
+    ]
+    df.loc["xC45"] = [solver.value(xC45[0]),solver.value(xC45[1]),solver.value(xC45[2]), 
+    np.sum([solver.value(xC45[0]),solver.value(xC45[1]),solver.value(xC45[2])])    + np.sum([solver.value(xC46[0]),solver.value(xC46[1]),solver.value(xC46[2])])   ,
+    np.sum([solver.value(xC45[0]),solver.value(xC45[1]),solver.value(xC45[2])])    + np.sum([solver.value(xC46[0]),solver.value(xC46[1]),solver.value(xC46[2])])   , 
+    np.sum([solver.value(xC45[0]),solver.value(xC45[1]),solver.value(xC45[2])])    + np.sum([solver.value(xC46[0]),solver.value(xC46[1]),solver.value(xC46[2])])   , 
+    np.sum([solver.value(xC45[0]),solver.value(xC45[1]),solver.value(xC45[2])* 2]) + np.sum([solver.value(xC46[0]),solver.value(xC46[1]),solver.value(xC46[2])* 2]), 
+    np.sum([solver.value(xC45[0]),solver.value(xC45[1]),solver.value(xC45[2])])    + np.sum([solver.value(xC46[0]),solver.value(xC46[1]),solver.value(xC46[2])])
+    
+    ]
+    df.loc["xG45"] = [solver.value(xG45[0]),solver.value(xG45[1]),solver.value(xG45[2]), 
+    np.sum([solver.value(xG45[0]),solver.value(xG45[1]),solver.value(xG45[2])])    +  np.sum([solver.value(xG46[0]),solver.value(xG46[1]),solver.value(xG46[2])])   ,
+    np.sum([solver.value(xG45[0]),solver.value(xG45[1]),solver.value(xG45[2])])    +  np.sum([solver.value(xG46[0]),solver.value(xG46[1]),solver.value(xG46[2])])   , 
+    np.sum([solver.value(xG45[0]),solver.value(xG45[1]),solver.value(xG45[2])])    +  np.sum([solver.value(xG46[0]),solver.value(xG46[1]),solver.value(xG46[2])])   , 
+    np.sum([solver.value(xG45[0]),solver.value(xG45[1]),solver.value(xG45[2])* 2]) +  np.sum([solver.value(xG46[0]),solver.value(xG46[1]),solver.value(xG46[2])* 2]), 
+    np.sum([solver.value(xG45[0]),solver.value(xG45[1]),solver.value(xG45[2])])    +  np.sum([solver.value(xG46[0]),solver.value(xG46[1]),solver.value(xG46[2])])
+    
+    ]
+    df.loc["xK46"] = [solver.value(xK46[0]),solver.value(xK46[1]),solver.value(xK46[2])
+    , 0,0,0,0,0
+    
+    
+    
+    
+    ]
+    df.loc["xC46"] = [solver.value(xC46[0]),solver.value(xC46[1]),solver.value(xC46[2])
+    
+     , 0,0,0,0, 0 # "Express Shipping"
+    
+    
+    
+    
+    ]
+    df.loc["xG46"] = [solver.value(xG46[0]),solver.value(xG46[1]),solver.value(xG46[2])
+
+    , 0,0,0,0, 0 #np.dot( [solver.value(xC46[0]),solver.value(xC46[1]),solver.value(xC46[2])], [ (shipping_costs[1][1] ), (shipping_costs[1][1]) * 1.5, (shipping_costs[1][1] * 2)]) - np.dot([solver.value(xC46[0]),solver.value(xC46[1]),solver.value(xC46[2])], [ (shipping_costs[1][0] ), (shipping_costs[1][0]) * 1.5, (shipping_costs[1][0] * 2)])
+   
+   
+   
+    
+    ]
+
+    if status == cp_model.OPTIMAL: #or status == cp_model.FEASIBLE:
+        # print(f"Maximum of objective function: {solver.objective_value}\n")
+
+     
+        return {
+            "value": solver.objective_value,
+            "df": df
+            }
+    else:
+        return 1
+        return {
+            "value": solver.objective_value,
+            "df": df
+            }
+
+    return 1
+
+
+def main():
+    # Brute force all of th conditionals
+    n = 6
+    permutations = binstr(n)
+
+    incumbent = 99999999999999900000
+    incumbent_index = 0
+    incumbent_df = None
+    count = len(permutations)
+    for i, p in enumerate(permutations):
+
+        res = bruteForce(p)
+        
+        if  res != 1:
+            if res['value'] < incumbent:
+                print(f"        New Incumbent: {res['value']}")
+                incumbent = res['value']
+                incumbent_df = res['df']
+                incumbent_index = i
+
+                print(res['df'])
+                print(permutations[i])
+
+        if (i%100 == 0):
+            sys.stdout.write(f"({i}/{count})")
+            sys.stdout.flush()
+            restart_line()
+        
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdStream — Ad Allocation Engine — Hunter Delaney</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body class="wide">
+
+  <header>
+    <h1><a class="home-link" href="../../index.html">Hunter <span class="accent">Delaney</span></a></h1>
+    <nav><a href="../../index.html">&larr; back to all projects</a></nav>
+  </header>
+
+  <main>
+    <section>
+      <h2><span class="accent">#</span> AdStream — Ad Allocation Engine</h2>
+      <p class="tags" style="display:block;margin:-8px 0 12px;">Python · OR-Tools · MILP</p>
+      <p>Two-stage mixed-integer program + local search that allocates ad impressions and sequences advertisers under capacity, topic, and spacing constraints — using 100% of inventory and lifting net revenue ~14.6%.</p>
+    </section>
+
+    <div class="browser">
+      <div class="sidebar" id="sidebar"></div>
+      <div class="preview">
+        <div class="preview-bar">
+          <span class="file-name" id="pv-name"></span>
+          <span class="file-actions">
+            <a class="btn" id="pv-open" href="#" target="_blank">Open &#8599;</a>
+            <a class="btn" id="pv-dl" href="#" download>Download</a>
+          </span>
+        </div>
+        <iframe id="pv-frame" title="file preview"></iframe>
+        <div id="pv-empty" class="pv-empty" style="display:none;">
+          No inline preview for this file type &mdash; use Download.
+        </div>
+      </div>
+    </div>
+    <p class="note">PowerPoint and Excel previews load through Microsoft&rsquo;s online viewer and
+    only work on the live site.</p>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Hunter Delaney</p>
+  </footer>
+
+  <script>
+    var FILES = [
+  {
+    "name": "adstream_system.ipynb",
+    "label": "Optimization notebook",
+    "preview": "files/adstream_system.html"
+  },
+  {
+    "name": "Executive_Slides.pptx",
+    "label": "Executive slides",
+    "preview": "https://view.officeapps.live.com/op/embed.aspx?src=https%3A%2F%2Fcassie7511.github.io%2FProjects%2Fadstream%2Ffiles%2FExecutive_Slides.pptx"
+  },
+  {
+    "name": "Consulting_Portfolio_Presentation.pdf",
+    "label": "Consulting portfolio deck (Phase III)",
+    "preview": "files/Consulting_Portfolio_Presentation.pdf"
+  }
+];
+
+    var sidebar = document.getElementById('sidebar');
+    FILES.forEach(function (f, i) {
+      var el = document.createElement('a');
+      el.className = 'sideitem';
+      el.href = '#' + f.name;
+      el.innerHTML = '<span class="file-name">' + f.name + '</span>' +
+                     '<span class="file-label">' + f.label + '</span>';
+      el.onclick = function (e) { e.preventDefault(); show(i); };
+      sidebar.appendChild(el);
+    });
+
+    function show(i) {
+      var f = FILES[i];
+      var items = sidebar.children;
+      for (var j = 0; j < items.length; j++) {
+        items[j].className = 'sideitem' + (j === i ? ' active' : '');
+      }
+      document.getElementById('pv-name').textContent = f.name;
+      document.getElementById('pv-dl').href = 'files/' + f.name;
+      var frame = document.getElementById('pv-frame');
+      var empty = document.getElementById('pv-empty');
+      var open = document.getElementById('pv-open');
+      if (f.preview) {
+        frame.src = f.preview;
+        frame.style.display = '';
+        empty.style.display = 'none';
+        open.style.display = '';
+        open.href = f.preview;
+      } else {
+        frame.src = 'about:blank';
+        frame.style.display = 'none';
+        empty.style.display = 'flex';
+        open.style.display = 'none';
+      }
+    }
+    show(0);
+  </script>
+
+</body>
+</html>

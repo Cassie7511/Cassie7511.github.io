@@ -1,0 +1,232 @@
+/* ---- palette: black / gray / cherry blossom pink ---- */
+:root {
+  --bg:      #0d0d0f;   /* near-black background */
+  --surface: #17171a;   /* card background */
+  --border:  #2a2a2f;   /* card borders */
+  --text:    #c9c9cf;   /* main gray text */
+  --muted:   #8a8a92;   /* dimmer gray */
+  --pink:    #f6b3c5;   /* cherry blossom */
+  --pink-dim:#d98ba1;   /* darker pink for hovers */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+/* ---- header ---- */
+header h1 {
+  color: #fff;
+  font-size: 2.2rem;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+.accent { color: var(--pink); }
+
+.tagline {
+  color: var(--muted);
+  margin-top: 4px;
+  font-size: 0.95rem;
+}
+
+nav {
+  margin-top: 16px;
+  display: flex;
+  gap: 18px;
+}
+
+nav a {
+  color: var(--pink);
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-bottom: 1px solid transparent;
+}
+
+nav a:hover {
+  color: var(--pink-dim);
+  border-bottom-color: var(--pink-dim);
+}
+
+/* ---- sections ---- */
+main { margin-top: 48px; }
+
+#about p { color: var(--text); }
+
+section h2 {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 40px 0 18px;
+}
+
+/* ---- project cards ---- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  transition: border-color 0.15s ease;
+}
+
+.card:hover { border-color: var(--pink-dim); }
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-bottom: 6px;
+}
+
+.card h3 {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.tags {
+  color: var(--pink);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.card p {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.more {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--pink);
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+.more:hover { color: var(--pink-dim); }
+
+/* ---- project file pages ---- */
+body.wide { max-width: 1080px; }
+
+.home-link { color: inherit; text-decoration: none; }
+
+.file-name { color: #fff; font-size: 0.9rem; word-break: break-all; }
+
+.file-label { color: var(--muted); font-size: 0.78rem; }
+
+.file-actions { display: flex; gap: 8px; }
+
+.browser {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  align-items: stretch;
+}
+
+.sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sideitem {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.sideitem:hover { border-color: var(--pink-dim); }
+
+.sideitem.active { border-color: var(--pink); }
+
+.sideitem.active .file-name { color: var(--pink); }
+
+.preview {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.preview-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 12px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.preview iframe {
+  width: 100%;
+  height: 72vh;
+  border: 0;
+  background: #fff;
+  flex: 1;
+}
+
+.pv-empty {
+  flex: 1;
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+  padding: 20px;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .browser { flex-direction: column; }
+  .sidebar { width: 100%; }
+  .preview iframe { height: 60vh; }
+}
+
+.btn {
+  color: var(--pink);
+  border: 1px solid var(--pink-dim);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn:hover { background: var(--pink); color: #0d0d0f; }
+
+.note { color: var(--muted); font-size: 0.78rem; margin-top: 12px; }
+
+/* ---- footer ---- */
+footer {
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+footer a { color: var(--pink); text-decoration: none; }
+footer a:hover { color: var(--pink-dim); }
