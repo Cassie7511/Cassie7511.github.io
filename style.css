@@ -181,7 +181,8 @@ body.wide { max-width: 1080px; }
 
 .preview iframe {
   width: 100%;
-  height: 72vh;
+  height: 82vh;
+  min-height: 640px;
   border: 0;
   background: #fff;
   flex: 1;
