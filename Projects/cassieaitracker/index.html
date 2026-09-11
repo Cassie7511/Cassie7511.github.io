@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CassieAITracker — Hunter Delaney</title>
+  <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* Scoped to this page. The other project pages are file browsers; this one
+       is a live app, so it needs a screenshot layout the shared sheet has no
+       reason to carry. */
+    .cta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 18px 0 4px;
+    }
+    .btn-solid {
+      background: var(--pink);
+      color: #0d0d0f;
+      border-color: var(--pink);
+    }
+    .btn-solid:hover { background: var(--pink-dim); border-color: var(--pink-dim); color: #0d0d0f; }
+
+    .shots {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 32px 0 8px;
+    }
+    .shot { flex: 0 1 290px; max-width: 290px; }
+    .shot img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+    .shot figcaption {
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .how { display: grid; gap: 14px; margin-top: 10px; }
+    @media (min-width: 720px) { .how { grid-template-columns: 1fr 1fr; } }
+    .how .card { margin-bottom: 0; }
+    .how h3 { margin-bottom: 6px; }
+  </style>
+</head>
+<body class="wide">
+
+  <header>
+    <h1><a class="home-link" href="../../index.html">Hunter <span class="accent">Delaney</span></a></h1>
+    <nav><a href="../../index.html">&larr; back to all projects</a></nav>
+  </header>
+
+  <main>
+    <section>
+      <h2><span class="accent">#</span> CassieAITracker</h2>
+      <p class="tags" style="display:block;margin:-8px 0 12px;">JavaScript &middot; Cloudflare Workers &middot; Claude API &middot; PWA</p>
+      <p>
+        A calorie and macro tracker built as an installable web app. Describe a meal in
+        plain language and the Claude API returns calories, protein, and carbs through a
+        Cloudflare Worker that keeps the API key server-side. The food log lives on the
+        device in IndexedDB, so the app works offline and no personal health data leaves
+        the phone.
+      </p>
+
+      <div class="cta">
+        <a class="btn btn-solid" href="https://cassie7511.github.io/CassieAITracker/" target="_blank">Open the app &#8599;</a>
+        <a class="btn" href="https://github.com/Cassie7511/CassieAITracker" target="_blank">Source on GitHub &#8599;</a>
+      </div>
+      <p class="note">Signing in needs a private app token, so the live link opens to the connection screen.</p>
+    </section>
+
+    <div class="shots">
+      <figure class="shot">
+        <img src="screens/today.webp" alt="The Today screen: a running calorie total with protein and carbs beneath, a text box reading &quot;What did you eat?&quot;, and two logged entries." width="371" height="768" loading="lazy">
+        <figcaption>Log a meal in plain text</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="screens/history.webp" alt="The History screen: range toggle, average stat tiles, a bar chart of calories per day and a two-line chart of protein and carbs." width="371" height="768" loading="lazy">
+        <figcaption>History, with per-day trends</figcaption>
+      </figure>
+    </div>
+
+    <section>
+      <h2><span class="accent">#</span> how it works</h2>
+
+      <div class="how">
+        <div class="card">
+          <h3>Keys never reach the phone</h3>
+          <p>
+            An API key in frontend JavaScript is readable by anyone who opens DevTools, so
+            the app talks to a Cloudflare Worker that holds the key as an encrypted secret,
+            checks a shared token, and proxies to Claude. Spend is capped at the account level.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Schema-validated responses</h3>
+          <p>
+            The model is constrained to return exactly <code>{ calories, protein_g, carbs_g }</code>
+            via structured outputs, so there is no JSON scraped out of prose and no retry loop
+            on malformed output.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Measured, not guessed</h3>
+          <p>
+            Model and settings were chosen by benchmarking against foods with known label
+            values. Reasoning effort turned out to matter more than model choice: at low
+            effort the same query returned anywhere from 908 to 1090 kcal for one pound of
+            ground beef.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Saved foods bypass the model</h3>
+          <p>
+            Correct an entry once and it is remembered under the phrase you typed, matched on
+            a normalised token set. Repeat foods then log instantly from your own numbers —
+            no request, no cost, no run-to-run variance.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Hunter Delaney</p>
+  </footer>
+
+</body>
+</html>
