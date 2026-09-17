@@ -76,11 +76,11 @@
 
     <div class="shots">
       <figure class="shot">
-        <img src="screens/today.webp" alt="The Today screen: a running calorie total with protein and carbs beneath, a text box reading &quot;What did you eat?&quot; with camera and enter buttons, and three logged entries including one from a food photo." width="580" height="1202" loading="lazy">
+        <img src="screens/today-v2.webp" alt="The Today screen: a running calorie total with protein and carbs beneath, a text box reading &quot;What did you eat?&quot; with camera and enter buttons, and three logged entries including one from a food photo." width="580" height="1202" loading="lazy">
         <figcaption>Log a meal in plain text or a photo</figcaption>
       </figure>
       <figure class="shot">
-        <img src="screens/history.webp" alt="The History screen: range toggle, average stat tiles, a bar chart of calories per day and a two-line chart of protein and carbs." width="580" height="1199" loading="lazy">
+        <img src="screens/history-v2.webp" alt="The History screen: range toggle, average stat tiles, a bar chart of calories per day and a two-line chart of protein and carbs." width="580" height="1199" loading="lazy">
         <figcaption>History, with per-day trends</figcaption>
       </figure>
     </div>
@@ -99,30 +99,13 @@
         </div>
 
         <div class="card">
-          <h3>Schema-validated responses</h3>
+          <h3>How an API call works</h3>
           <p>
-            The model is constrained to return exactly <code>{ calories, protein_g, carbs_g }</code>
-            via structured outputs, so there is no JSON scraped out of prose and no retry loop
-            on malformed output.
-          </p>
-        </div>
-
-        <div class="card">
-          <h3>Measured, not guessed</h3>
-          <p>
-            Model and settings were chosen by benchmarking against foods with known label
-            values. Reasoning effort turned out to matter more than model choice: at low
-            effort the same query returned anywhere from 908 to 1090 kcal for one pound of
-            ground beef.
-          </p>
-        </div>
-
-        <div class="card">
-          <h3>Saved foods bypass the model</h3>
-          <p>
-            Correct an entry once and it is remembered under the phrase you typed, matched on
-            a normalised token set. Repeat foods then log instantly from your own numbers —
-            no request, no cost, no run-to-run variance.
+            The app sends the meal to the Worker, either as text or as a photo resized on the
+            phone first. The Worker checks the token and calls the Claude API with a short
+            system prompt and a response schema. Claude returns exactly
+            <code>{ calories, protein_g, carbs_g }</code>, which the Worker passes back and
+            the app adds to the day's log.
           </p>
         </div>
       </div>
