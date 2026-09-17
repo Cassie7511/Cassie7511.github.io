@@ -105,6 +105,13 @@ section h2 {
   font-size: 0.9rem;
 }
 
+/* Full title of a published paper, set above its description. */
+.card .paper-title {
+  color: var(--text);
+  font-style: italic;
+  margin-bottom: 6px;
+}
+
 .more {
   display: inline-block;
   margin-top: 10px;
