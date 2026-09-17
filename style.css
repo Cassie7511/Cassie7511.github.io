@@ -97,7 +97,8 @@ section h2 {
 .tags {
   color: var(--pink);
   font-size: 0.78rem;
-  white-space: nowrap;
+  /* Wraps between tags on narrow screens; multi-word tags use &nbsp; so they
+     stay on one line. */
 }
 
 .card p {
