@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Night Sakura VS Code Theme — Hunter Delaney</title>
+  <link rel="stylesheet" href="../../style.css">
+  <style>
+    /* Scoped to this page: wide editor screenshots, stacked. */
+    .cta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 18px 0 4px;
+    }
+    .btn-solid {
+      background: var(--pink);
+      color: #0d0d0f;
+      border-color: var(--pink);
+    }
+    .btn-solid:hover { background: var(--pink-dim); border-color: var(--pink-dim); color: #0d0d0f; }
+
+    .shots { display: grid; gap: 32px; margin: 32px 0 8px; }
+    .shot { margin: 0; }
+    .shot img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .shot figcaption {
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body class="wide">
+
+  <header>
+    <h1><a class="home-link" href="../../index.html">Hunter <span class="accent">Delaney</span></a></h1>
+    <nav><a href="../../index.html">&larr; back to all projects</a></nav>
+  </header>
+
+  <main>
+    <section>
+      <h2><span class="accent">#</span> Night Sakura VS Code Theme</h2>
+      <p class="tags" style="display:block;margin:-8px 0 12px;">JavaScript &middot; Node.js &middot; VS Code</p>
+      <p>
+        My own VS Code theme, in the same colors as this site: near-black and gray, with
+        cherry-blossom pink for highlights. It comes in a dark and a light version and also
+        colors the Claude Code panel. A small Node script builds both versions from one
+        palette file, and won't save a theme with a color that's hard to read.
+      </p>
+
+      <div class="cta">
+        <a class="btn btn-solid" href="https://github.com/Cassie7511/cherry-blossom-theme" target="_blank">Source on GitHub &#8599;</a>
+      </div>
+    </section>
+
+    <div class="shots">
+      <figure class="shot">
+        <a href="screens/dark.webp" target="_blank"><img src="screens/dark.webp" alt="VS Code in the dark theme: a Python file on a near-black background with pink function names and lavender keywords, and a Claude Code conversation beside it with pink inline code." width="1600" height="1000" loading="lazy"></a>
+        <figcaption>Dark</figcaption>
+      </figure>
+      <figure class="shot">
+        <a href="screens/light.webp" target="_blank"><img src="screens/light.webp" alt="VS Code in the light theme: the same Python file and Claude Code conversation on a warm off-white background, with deep pink function names and violet keywords." width="1600" height="1000" loading="lazy"></a>
+        <figcaption>Light</figcaption>
+      </figure>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Hunter Delaney</p>
+  </footer>
+
+</body>
+</html>
